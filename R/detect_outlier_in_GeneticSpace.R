@@ -143,7 +143,12 @@ ggoutlier_geneticKNN <- function(geo_coord,
     }
 
     k = opt.k
-    if(verbose) cat(paste("\n The optimal k is ",opt.k,". Its figure is saved at ", k.sel.plot," \n", sep = ""))
+    if(make_fig){
+      if(verbose) cat(paste0("\n The optimal k is ",opt.k,". Its figure is saved at ", k.sel.plot," \n"))
+    }else{
+      if(verbose) cat(paste0("\n The optimal k is ",opt.k," \n"))
+    }
+
 
   }
   if(is.null(k)){stop("k is NULL!")}
@@ -265,6 +270,8 @@ ggoutlier_geneticKNN <- function(geo_coord,
     # if `maxIter` is NULL -> let it equal to 50% of sample size
     if(is.null(maxIter)){maxIter <- round(nrow(gen_coord) * 0.5)}
     while (i <= maxIter) {
+      cat("iteration",i, "\r")
+      flush.console()
       if(i > 1){
         tmp.pgdM <- tmp.pgdM[to_keep, to_keep]
         tmp.geo_coord <- tmp.geo_coord[to_keep,]

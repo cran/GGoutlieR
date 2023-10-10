@@ -13,7 +13,7 @@ plot_ggoutlier(
   map_color = "black",
   p_thres = NULL,
   color_res = 10,
-  dot_cex = 0.4,
+  dot_cex = NULL,
   map_type = c("geographic_knn", "genetic_knn", "both"),
   select_xlim = c(-180, 180),
   select_ylim = c(-90, 90),
@@ -21,14 +21,13 @@ plot_ggoutlier(
   plot_ylim = NULL,
   only_edges_in_xylim = TRUE,
   pie_r_scale = 1,
-  red_alpha = 0.8,
-  map_resolution = "low",
+  map_resolution = "medium",
   show_knn_pie = FALSE,
-  show_col_bar = TRUE,
   which_sample = NULL,
   add_benchmark_graph = TRUE,
-  vertical_plots = TRUE,
-  adjust_p_value_projection = FALSE
+  adjust_p_value_projection = FALSE,
+  linewidth_range = c(0.5, 3),
+  plot_labels = "auto"
 )
 }
 \arguments{
@@ -64,24 +63,22 @@ plot_ggoutlier(
 
 \item{pie_r_scale}{numeric. A scale controlling the radius of pie charts}
 
-\item{red_alpha}{numeric. A value controlling the transparency of red lines. the default is 0.8}
-
-\item{map_resolution}{string. The resolution of the geographical map. See details in the manual of `rworldmap::getMap()`}
+\item{map_resolution}{a character string. The resolution of the geographical map. See details of the `scale` argument in the manual of `rnaturalearth::ne_countries()`. The default is `map_resolution = "medium"`}
 
 \item{show_knn_pie}{logic. If `TRUE`, the ancestry coefficients of K nearest neighbors of significant samples will display on the map. The default is `FALSE`.}
-
-\item{show_col_bar}{logic. If `TRUE`, a color key will be added to the output graph.}
 
 \item{which_sample}{a string vector of sample ID(s). If users want to only show specific sample(s)}
 
 \item{add_benchmark_graph}{logic. If `TRUE`, a benchmark graph with only pie charts of ancestry coefficients for comparison with the outlier graph.}
 
-\item{vertical_plots}{logic. If `TRUE`, a benchmark graph and outlier graph will be combined in a vertical direction.}
-
 \item{adjust_p_value_projection}{logic. If `TRUE`, the function will perform KNN prediction by forcing K=1 and compute new p-values for visualization.}
+
+\item{linewidth_range}{numeric. A vector of two values. It is used to control the minimal and maximal width of KNN network on the geographical map.}
+
+\item{plot_labels}{character. A string of labels for plots. The default is `plot_labels = "auto"`. This parameter is for `cowplot::plot_grid`.}
 }
 \value{
-a geographical map with colored lines showing sample pairs with unusual geo-genetic associations.
+ggplot object. The plot is geographical map(s) with colored lines showing sample pairs with unusual geo-genetic associations.
 }
 \description{
 Visualize geo-genetic patterns of outliers with their K nearest neighbors
@@ -97,6 +94,7 @@ library(GGoutlieR)
 data("ipk_anc_coef") # get ancestry coefficients
 data("ipk_geo_coord") # get geographical coordinates
 data(ggoutlier_example) # get an example output of ggoutlier
+\dontrun{
 plot_ggoutlier(ggoutlier_res = ggoutlier_example,
                gen_coord = ipk_anc_coef,
                geo_coord = ipk_geo_coord,
@@ -106,7 +104,8 @@ plot_ggoutlier(ggoutlier_res = ggoutlier_example,
                select_ylim = c(10,62),
                plot_xlim = c(-20,140),
                plot_ylim = c(10,62),
-               pie_r_scale = 1.2,
-               map_resolution = "coarse")
+               pie_r_scale = 1.8,
+               map_resolution = "medium")
+               }
 
 }

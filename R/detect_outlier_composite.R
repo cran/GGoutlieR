@@ -48,7 +48,7 @@ ggoutlier_compositeKNN <- function(geo_coord,
                                    verbose = TRUE
                                   ){
   # NOTE doSNOW is superseded -> cannot pass CRAN pre-test -> remove progress bar for parallel computation (doParallel does not support progress bars, see https://stackoverflow.com/questions/5423760/how-do-you-create-a-progress-bar-when-using-the-foreach-function-in-r/10982524#10982524)
-  required_pkgs <- c("geosphere", # for calculating geographical distances
+  required_pkgs <- c("sf", # for calculating geographical distances
                      "stats4", # package to perform maximum likelihood estimation
                      "FastKNN", # KNN algorithm using a given distance matrix (other packages do not take arbitrary distance matrices)
                      "foreach", "doParallel",
@@ -121,10 +121,18 @@ ggoutlier_compositeKNN <- function(geo_coord,
   # Data pre-treatment
   #--------------------------------
   #--------------------------------
+  ## geographical data: data.frame to sf format
+  geo_data_df <- data.frame(ID = rownames(geo_coord),
+                            x = geo_coord$x,
+                            y = geo_coord$y)
+  geo_data_sf <- sf::st_as_sf(geo_data_df,
+                              coords = c("x", "y"), crs = 4326)
+
   ## calculate geographical distance
-  geo.dM <- geosphere::distm(x = geo_coord)/s
+  geo.dM <- sf::st_distance(geo_data_sf)/s
+  geo.dM <- matrix(as.vector(geo.dM), ncol = ncol(geo.dM), nrow = nrow(geo.dM)) # convert geo.dM from `units` to matrix
   ## handle samples with identical geographical coordinates
-  if(any(geo.dM[lower.tri(geo.dM)] == 0)){
+  if(any(as.vector(geo.dM[lower.tri(geo.dM)]) == 0)){
     if(verbose) cat("Find samples with identical geographical coordinates.\n")
     if(any(min_nn_dist == 0 , is.null(min_nn_dist))){
       if(verbose) cat("Add one unit of distance to individual pairs\n")
@@ -209,7 +217,12 @@ ggoutlier_compositeKNN <- function(geo_coord,
     }
 
     k_geneticKNN = opt.k
-    if(verbose) cat(paste("\n The optimal k_geneticKNN is ",opt.k,". Its figure is saved at ", k.sel.plot," \n", sep = ""))
+    if(make_fig){
+      if(verbose) cat(paste0("\n The optimal k_geneticKNN is ",opt.k,". Its figure is saved at ", k.sel.plot," \n"))
+    }else{
+      if(verbose) cat(paste0("\n The optimal k_geneticKNN is ",opt.k," \n"))
+    }
+
 
   }
   if(is.null(k_geneticKNN)){stop("k_geneticKNN is NULL!")}
@@ -509,6 +522,8 @@ ggoutlier_compositeKNN <- function(geo_coord,
     # if `maxIter` is NULL -> let it equal to 50% of sample size
     if(is.null(maxIter)){maxIter <- round(nrow(gen_coord) * 0.5)}
     while (i <= maxIter) {
+      cat("iteration",i, "\r")
+      flush.console()
       if(i > 1){
         tmp.pgdM <- tmp.pgdM[to_keep, to_keep]
         tmp.geo.dM <- tmp.geo.dM[to_keep, to_keep]

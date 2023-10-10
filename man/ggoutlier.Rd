@@ -78,7 +78,7 @@ ggoutlier(
 \item{warning_minR2}{numeric. The prediction accuracy of KNN is evaluated as R^2 to assess the violation of isolation-by-distance expectation. If any R^2 is larger than `warning_minR2`, a warning message will be reported at the end of your analysis.}
 }
 \value{
-an object of `list`. If you set `method = "composite"`, `ggoutlier` will return a nested `list` with two subsidiary `list` which are `"geneticKNN_result"` and `"geoKNN_result"`. Each subsidiary list includes five items: `statistics` is a `data.frame` consisting of the D_geography ("Dgeo") or D_genetics ("Dg") values, p values and a column of logic values showing if a sample is an outlier or not. `threshold` is a `data.frame` recording the significance threshold. `gamma_parameter` is a vector recording the parameter of the heuristic Gamma distribution. `knn_index` and `knn_name` are a `data.frame` recording the K nearest neighbors of each sample. The subsidiary list `geneticKNN_result` has an additional item called `"scalar"`, which records the value of geographical distance scalar used in the computation. If you use `method = "geneticKNN"` and `method = "geoKNN"`, `ggoutlier` will return a `list` respectively corresponding to `"geneticKNN_result"` and `"geoKNN_result"`.
+an object of `list`. If you set `method = "composite"`, `ggoutlier` will return a nested `list` with two subsidiary `list` which are `"geneticKNN_result"` and `"geoKNN_result"`. Each subsidiary list includes five items: `statistics` is a `data.frame` consisting of the D_geography ("Dgeo") or D_genetics ("Dg") values, p values and a column of logic values showing if a sample is an outlier or not. `threshold` is a `data.frame` recording the significance threshold. `gamma_parameter` is a vector recording the parameter of the heuristic Gamma distribution. `knn_index` and `knn_name` are a `data.frame` recording the K nearest neighbors of each sample. The subsidiary list `geneticKNN_result` has an additional item called `"scalar"`, which records the value of geographical distance scalar used in the computation. If you set `method = "geneticKNN"`, or `method = "geoKNN"`, `ggoutlier` will return a `list` respectively corresponding to `"geneticKNN_result"` or `"geoKNN_result"`.
 }
 \description{
 This function is used to identify outliers with unusual geo-genetic patterns using the KNN approach. For the details of the outlier detection approach, please see Chang and Schmid 2023 (doi:https://doi.org/10.1101/2023.04.06.535838)
@@ -88,34 +88,20 @@ library(GGoutlieR)
 data("ipk_anc_coef") # get ancestry coefficients
 data("ipk_geo_coord") # get geographical coordinates
 
-## To reduce computational time, a random subset
-## of the IPK barley landrace collection is used
-## in this minimal example.
-## The argument setting `multi_stages = TRUE`
-## and a larger range of `klim` are recommended
-## in your analysis.
 
-indx <- sample(1:nrow(ipk_geo_coord), size = 100)
-mini_example <- ggoutlier(geo_coord = ipk_geo_coord[indx,],
-                             gen_coord = ipk_anc_coef[indx,],
-                             klim = c(3,6),
-                             p_thres = 0.01,
-                             cpu = 2,
-                             method = "composite",
-                             verbose = FALSE,
-                             min_nn_dist = 1000,
-                             multi_stages = FALSE)
-summary_ggoutlier(mini_example)
+#DON'T RUN: this analysis will take a few minutes
+\dontrun{
+ggoutlier_example <-
+                 ggoutlier(geo_coord = ipk_geo_coord,
+                           gen_coord = ipk_anc_coef,
+                           klim = c(3,6),
+                           p_thres = 0.01,
+                           cpu = 2,
+                           method = "composite",
+                           verbose = FALSE,
+                           min_nn_dist = 1000,
+                           multi_stages = FALSE)
 
-# DON'T RUN: this analysis will take a few minutes
-# full_example <- ggoutlier(geo_coord = ipk_geo_coord,
-#                           gen_coord = ipk_anc_coef,
-#                           klim = c(3,6),
-#                           p_thres = 0.01,
-#                           cpu = 2,
-#                           method = "composite",
-#                           verbose = FALSE,
-#                           min_nn_dist = 1000,
-#                           multi_stages = FALSE)
-
+head(summary_ggoutlier(ggoutlier_example)) # get a summary table
+}
 }

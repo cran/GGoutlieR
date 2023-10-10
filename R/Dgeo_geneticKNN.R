@@ -22,11 +22,15 @@ pred_geo_coord_knn <- function(geo_coord, pgdM, knn.indx, w_power){
     w <- (1/tmp.d)/(sum(1/tmp.d))
     res[j,] <- apply(tmp.geo_coord, 2, function(x){weighted.mean(x, w)})
   }
+  res <- as.data.frame(res)
+  colnames(res) <- colnames(geo_coord) # should be "x" and "y"
   return(res)
 } # pred_geo_coord_knn end
 
 ## a function to calculate Dg
 cal_Dgeo <- function(pred.geo_coord, geo_coord, scalar){
-  geodist <- (sapply(1:nrow(geo_coord),function(a){geosphere::distm(x = geo_coord[a,], y = pred.geo_coord[a,])/scalar}))
+  geo_coord_sf <- sf::st_as_sf(geo_coord, coords = c("x", "y"), crs = 4326)
+  pred.geo_coord_sf <- sf::st_as_sf(pred.geo_coord, coords = c("x", "y"), crs = 4326)
+  geodist <- as.vector(diag(sf::st_distance(x = geo_coord_sf, y = pred.geo_coord_sf)))/scalar
   return(geodist)
 } # cal_Dgeo end
