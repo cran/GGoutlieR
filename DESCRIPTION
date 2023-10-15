@@ -1,7 +1,7 @@
 Package: GGoutlieR
 Type: Package
 Title: Identify Individuals with Unusual Geo-Genetic Patterns
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: 
   c(person(given = "Che-Wei",
            family = "Chang",
@@ -25,9 +25,9 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 NeedsCompilation: no
-Packaged: 2023-10-10 20:36:17 UTC; user
+Packaged: 2023-10-15 20:48:51 UTC; user
 Author: Che-Wei Chang [aut, cre] (<https://orcid.org/0000-0001-6704-3732>),
   Karl Schmid [ths] (<https://orcid.org/0000-0001-5129-895X>)
 Maintainer: Che-Wei Chang <cheweichang92@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-10-10 21:00:08 UTC
+Date/Publication: 2023-10-15 21:50:18 UTC
